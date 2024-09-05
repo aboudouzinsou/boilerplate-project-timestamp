@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test API</h1>
+    <form id="apiForm">
+        <label for="dateInput">Enter a date or timestamp:</label>
+        <input type="text" id="dateInput" name="dateInput" placeholder="e.g., 2015-12-25 or 1451001600000">
+        <button type="submit">Submit</button>
+    </form>
+    <pre id="response"></pre>
+
+    <script>
+        document.getElementById('apiForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const dateInput = document.getElementById('dateInput').value;
+            fetch(`/api/${dateInput}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('response').textContent = 'Error: ' + error.message;
+                });
+        });
+    </script>
+</body>
+</html>

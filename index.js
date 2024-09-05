@@ -1,55 +1,43 @@
-// index.js
-// where your node app starts
+const express = require('express');
+const cors = require('cors');
+const app = express();
+const port = process.env.PORT || 3000;
 
-// init project
-var express = require('express');
-var app = express();
+app.use(cors()); // Utiliser le middleware CORS
 
-// enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
-// so that your API is remotely testable by FCC 
-var cors = require('cors');
-app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 204
+// Configurer EJS comme moteur de template
+app.set('view engine', 'ejs');
 
-// http://expressjs.com/en/starter/static-files.html
-app.use(express.static('public'));
-
-
-app.use(express.json());
-
-function formatDateToUTC(date) {
-  return date.toUTCString();
-}
-
-
-// http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (req, res) {
-  res.sendFile(__dirname + '/views/index.html');
+// Route pour la vue de test
+app.get('/', (req, res) => {
+  res.render('index');
 });
 
-
-// API endpoint to get the current time in UTC
+// Route pour l'API
 app.get('/api/:date?', (req, res) => {
-  let inputDate = req.params.date;
+  const dateParam = req.params.date;
+
   let date;
-
-  if(!inputDate) {
-    date = new Date();
-  } else if (!isNaN(inputDate)) {
-    date = new Date(parseInt(inputDate));
+  if (dateParam) {
+    if (!isNaN(dateParam)) {
+      date = new Date(parseInt(dateParam));
+    } else {
+      date = new Date(dateParam);
+    }
   } else {
-    date = new Date(date);
+    date = new Date();
   }
 
-  if (isNaN(date.getTime())) {
-    return res.json({ error: "Invalid Date" });
+  if (date.toString() === 'Invalid Date') {
+    res.json({ error: 'Invalid Date' });
+  } else {
+    res.json({
+      unix: date.getTime(),
+      utc: date.toUTCString()
+    });
   }
-
-  res.json({ unix: date.getTime(), utc: formatDateToUTC(date) });
 });
 
-
-
-// Listen on port set in environment variable or default to 3000
-var listener = app.listen(process.env.PORT || 3000, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
