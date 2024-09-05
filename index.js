@@ -29,13 +29,13 @@ app.get("/", function (req, res) {
 
 // API endpoint to get the current time in UTC
 app.get('/api/:date?', (req, res) => {
-  const date = req.params.date;
-  const utcDate = formatDateToUTC(date);
+  let inputDate = req.params.date;
+  let date;
 
-  if(!date) {
+  if(!inputDate) {
     date = new Date();
-  } else if (!isNaN(date)) {
-    date = new Date(parseInt(date));
+  } else if (!isNaN(inputDate)) {
+    date = new Date(parseInt(inputDate));
   } else {
     date = new Date(date);
   }
@@ -44,7 +44,7 @@ app.get('/api/:date?', (req, res) => {
     return res.json({ error: "Invalid Date" });
   }
 
-  res.json({ unix: utcDate.getTime(), utc: utcDate });
+  res.json({ unix: date.getTime(), utc: formatDateToUTC(date) });
 });
 
 
