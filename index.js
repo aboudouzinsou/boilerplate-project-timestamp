@@ -17,7 +17,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 function formatDateToUTC(date) {
-  return new Date(date).toUTCString();
+  return date.toUTCString();
 }
 
 
@@ -43,7 +43,7 @@ app.get('/api/:date?', (req, res) => {
   if (isNaN(date.getTime())) {
     return res.json({ error: "Invalid Date" });
   }
-  
+
   res.json({ unix: utcDate.getTime(), utc: utcDate });
 });
 
